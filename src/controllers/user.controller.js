@@ -123,12 +123,6 @@ apiUser.transfer = async (req, res) => {
                 return res.status(200).json({ fail: 'Sua conta não foi encontrada' });
             };
 
-            if((user.saldo - transfer) < 0) {
-            
-                console.log('Saldo insuficiente');
-                return res.status(400).json({ fail: 'Saldo insuficiente' });
-            };
-
             return user;
         });
 
@@ -151,8 +145,14 @@ apiUser.transfer = async (req, res) => {
         if(!accountOrigin && !accountDest) {
             
             console.log('Não pode ser realizada a Transferencia');
-            res.status(200).json({ fail: 'Não pode ser realizada a Transferencia' });
-        }
+            return res.status(200).json({ fail: 'Não pode ser realizada a Transferencia' });
+        };
+
+        if((accountOrigin.saldo - transfer) < 0) {
+            
+            console.log('Saldo insuficiente');
+            return res.status(400).json({ fail: 'Saldo insuficiente' });
+        };
 
         accountOrigin.saldo -= transfer;
         accountOrigin.save();

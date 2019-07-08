@@ -6,11 +6,6 @@ mongoose.connect('mongodb+srv://atlas:atlas@cluster0-bdoft.mongodb.net/test?retr
     useCreateIndex :  true,
 });
 
-// mongoose.connect('mongodb://localhost/reais-jobs', { 
-//     useNewUrlParser: true,
-//     useCreateIndex :  true,
-// });
-
 mongoose.connection.on('connected', function(){
 
     console.log('conectado ao Mongo');

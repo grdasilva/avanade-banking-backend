@@ -9,7 +9,7 @@ const userModel = new mongoose.Schema({
     },
     cpf: {
         required: true,
-        type: String,
+        type: Number,
         unique: true
     },
     account: {
@@ -23,7 +23,7 @@ const userModel = new mongoose.Schema({
     password: {
         required: true,
         type: String,
-        select: true
+        select: false
     }
 })
 

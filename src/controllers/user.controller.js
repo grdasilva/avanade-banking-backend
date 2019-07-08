@@ -78,36 +78,45 @@ apiUser.add = async (req, res) => {
     try {
         
         const { name, cpf, password  } = req.body;
+        const cpfString = cpf.toString();
+
+        console.log(typeof cpfString);
+
+        if(!TestaCPF(cpfString)) {
+            console.log('cpf inválido');
+            return res.status(400).json({ fail: 'cpf inválido' })
+        };
+
+        if(password.length < 6) {
+            console.log(password);
+            console.log('A senha precisar conter 6 caracteres númericos');
+            return res.status(400).json({ fail: 'A senha precisar conter 6 caracteres númericos' });
+        };
+    
+        if(password.length > 6) {
+            console.log(password);  
+            console.log('A senha não pode conter mais que 6 caracteres númericos');
+            return res.status(400).json({ fail: 'A senha não pode conter mais que 6 caracteres númericos' });
+        };
+
+        console.log(typeof cpf);
 
         await userModel.create({ name, cpf, password }, (error, user) => {
     
             if(error) {
+                console.log('Este´é o erro' + error.message);
+                
                 console.log(error.message);
                 return res.status(400).json({ fail: error.message });
             };
-        
-            if(!TestaCPF(cpf)) {
-                console.log('cpf inválido');
-                return res.status(400).json({ fail: 'cpf inválido' })
-            };
-    
-            if(password) {
 
-                if(password.length < 6) {
-                    console.log(password);
-                    console.log('A senha precisar conter 6 caracteres númericos');
-                    return res.status(400).json({ fail: 'A senha precisar conter 6 caracteres númericos' });
-                };
-        
-                if(password.length > 6) {
-                    console.log(password);  
-                    console.log('A senha não pode conter mais que 6 caracteres númericos');
-                    return res.status(400).json({ fail: 'A senha não pode conter mais que 6 caracteres númericos' });
-                };
+            if(!user) {
+                console.log('Ocorreu algum erro durante a criado do usuário');
+                return res.status(400).json({ fail: 'Ocorreu algum erro durante a criado do usuário' })
             };
 
             // user.password = undefined;
-            console.log('############# User criado ###############');
+            console.log('############# Usuário criado ###############');
             console.log(user);
             console.log('#########################################');
     
@@ -117,7 +126,6 @@ apiUser.add = async (req, res) => {
         console.log(error.message);
         return res.status(400).json({ fail: error.message });
     }
-    
 };
 
 apiUser.transfer = async (req, res) => {

@@ -85,5 +85,4 @@ apiLogin.requiredToken = async (req, res, next) => {
     });
 };
 
-
 module.exports = apiLogin;

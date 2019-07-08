@@ -1,15 +1,13 @@
 const mongoose      = require('mongoose');
 const userModel     = mongoose.model('userModel');
-const jwt           = require('jsonwebtoken');
-const authSecret    = require('../config/auth.secret.json');
-const bcrypt        = require('bcryptjs');
-// const validateCpf   = require('validar-cpf');
 let apiUser        = {};
 
 function TestaCPF(strCPF) {
-    var Soma;
-    var Resto;
+    let Soma;
+    let Resto;
+    Number(strCPF)
     Soma = 0;
+
   if (strCPF == "00000000000") return false;
      
   for (i=1; i<=9; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (11 - i);
@@ -41,11 +39,11 @@ apiUser.list = async (req, res) => {
 
       if(users) {
         console.log('############# Users listadas ###############');
-        res.status(200).json(users);
+        return res.status(200).json(users);
       };
     } catch (error) {
         console.log(error.message);
-        res.status(400).json({ fail: error.message });
+        return res.status(400).json({ fail: error.message });
     };  
 };
 
@@ -58,19 +56,18 @@ apiUser.listByCont = async (req, res) => {
 
             if(error) {
                 console.log(error.message);
-                res.status(400).json({ fail: error.message });
-                return;
+                return res.status(400).json({ fail: error.message });
             }
 
             console.log('############# User encontrado ###############');
             console.log(user);
             console.log('#############################################');
 
-            res.status(200).json(user);
+            return res.status(200).json(user);
         })
     } catch (error) {
         console.log(error.message);
-        res.status(400).json({ fail: error.message });
+        return res.status(400).json({ fail: error.message });
     }
 };
 
@@ -81,7 +78,6 @@ apiUser.add = async (req, res) => {
     try {
         
         const { name, cpf, password  } = req.body;
-        let passwordString = null;
 
         await userModel.create({ name, cpf, password }, (error, user) => {
     
@@ -90,22 +86,21 @@ apiUser.add = async (req, res) => {
                 return res.status(400).json({ fail: error.message });
             };
         
-            if(!TestaCPF(cpf.toString())) {
+            if(!TestaCPF(cpf)) {
                 console.log('cpf inválido');
                 return res.status(400).json({ fail: 'cpf inválido' })
             };
     
             if(password) {
 
-                passwordString = password.toString().length;
-                if(passwordString < 6) {
-                    console.log(passwordString);
+                if(password.length < 6) {
+                    console.log(password);
                     console.log('A senha precisar conter 6 caracteres númericos');
                     return res.status(400).json({ fail: 'A senha precisar conter 6 caracteres númericos' });
                 };
         
-                if(passwordString > 6) {
-                    console.log(passwordString);  
+                if(password.length > 6) {
+                    console.log(password);  
                     console.log('A senha não pode conter mais que 6 caracteres númericos');
                     return res.status(400).json({ fail: 'A senha não pode conter mais que 6 caracteres númericos' });
                 };
@@ -116,12 +111,11 @@ apiUser.add = async (req, res) => {
             console.log(user);
             console.log('#########################################');
     
-            res.status(200).json(user)
-            console.log('ok');
+            return res.status(200).json(user);
         })
     } catch (error) {
         console.log(error.message);
-        res.status(400).json({ fail: error.message });
+        return res.status(400).json({ fail: error.message });
     }
     
 };
@@ -183,11 +177,11 @@ apiUser.transfer = async (req, res) => {
         accountDest.save();
 
         console.log('Transferencia realizada');
-        res.status(200).json({ success: 'Tranferência realizada' });
+        return nres.status(200).json({ success: 'Tranferência realizada' });
         
     } catch (error) {
         console.log(error.message);
-        res.status(400).json({ fail: error.message });
+        return res.status(400).json({ fail: error.message });
     };
     
 };
@@ -203,8 +197,7 @@ apiUser.deposit = async (req, res) => {
 
             if(error) {
                 console.log(error.message);
-                res.status(400).json({ fail: error.message });
-                return;
+                return res.status(400).json({ fail: error.message });
             }
 
             if(!user) {
@@ -238,19 +231,15 @@ apiUser.remove = async (req, res) => {
 
         if(error) {
             console.log(error.message);
-            res.status(400).json({ fail: error.message });
-            return;    
+            return res.status(400).json({ fail: error.message });
         };
 
-        console.log('############# User removido ###############');
-        console.log(user);
-        console.log('############################################');
-
-        res.status(200).json({ success: 'Usuário removido' });
+        console.log('############# Usuário removido ###############');
+        return res.status(200).json({ success: 'Usuário removido' });
       })
     } catch (error) {
         console.log(error.message);
-        res.status(400).json({ fail: error.message });
+        return res.status(400).json({ fail: error.message });
     };
 };
 

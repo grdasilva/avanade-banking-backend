@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const paginate = require('mongoose-paginate');
-
+const bcryptjs = require('bcryptjs');
 const userModel = new mongoose.Schema({
 
     name: {
@@ -9,7 +9,7 @@ const userModel = new mongoose.Schema({
     },
     cpf: {
         required: true,
-        type: Number,
+        type: String,
         unique: true
     },
     account: {
@@ -22,19 +22,19 @@ const userModel = new mongoose.Schema({
     },
     password: {
         required: true,
-        type: Number,
+        type: String,
         select: true
     }
 })
 
 userModel.plugin(paginate);
 
-// userModel.pre('save', async function(next) {
+userModel.pre('save', async function(next) {
     
-//     const hash = await bcryptjs.hash(this.password, 10);
+    const hash = await bcryptjs.hash(this.password, 10);
 
-//     this.password = hash;
-//     next();
-// });
+    this.password = hash;
+    next();
+});
 
 mongoose.model('userModel', userModel);

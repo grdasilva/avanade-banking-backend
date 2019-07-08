@@ -13,26 +13,22 @@ apiLogin.login = async (req, res) => {
 
         if(!cpf) {
             console.log('cpf não informado');
-            res.status(400).json({ fail: 'cpf não informado' });
-            return;
+            return res.status(400).json({ fail: 'cpf não informado' });
         };
 
         if(!user) {
             console.log('############### cpf inválido ###############');
-            res.status(400).json({fail: 'cpf inválido'});
-            return;
+            return res.status(400).json({fail: 'cpf inválido'});
         };
 
         if(!password) {
             console.log('password não informado');
-            res.status(400).json({ fail: 'password não informado' });
-            return;
+            return res.status(400).json({ fail: 'password não informado' });
         };
         console.log(user);
         
 
-        // if(!await bcryptjs.compare(password, user.password)) {
-        if(password !== user.password) {
+        if(!await bcryptjs.compare(password, user.password)) {
 
             console.log('password incorreto');
             return res.status(400).json({ fail: 'password incorreto' });
@@ -53,12 +49,9 @@ apiLogin.login = async (req, res) => {
                 }
             );
             
+            console.log('############# Logado ###############');
             res.set('x-access-token', token);
             res.status(200).json({ user, token });
-    
-            console.log('############# Logado ###############');
-            console.log(user);
-            console.log('####################################');
         };
 
     } catch (error) {
@@ -74,18 +67,16 @@ apiLogin.requiredToken = async (req, res, next) => {
 
     if(!token) {
         console.log('############# Token não informado ###############');
-        res.status(400).json({ fail: 'Token não informado' });
-        return;
+        return res.status(400).json({ fail: 'Token não informado' });
     };
 
     jwt.verify(token, authSecret.secret, (error, decoded) => {
 
         if(error) {
+
             console.log(error.message);
             console.log('Token inválido');
-            
-            res.status(400).json({ fail: 'Token inválido' });
-            return;
+            return res.status(400).json({ fail: 'Token inválido' });
         };
 
         console.log('############# Acesso autorizado ###############');

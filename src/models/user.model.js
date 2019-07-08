@@ -14,7 +14,7 @@ const userModel = new mongoose.Schema({
     },
     account: {
         type: String,
-        default: Math.floor(Math.random() * 100000) + '-' + Math.floor(Math.random() * 10)
+        default: String
     },
     balance: {
         type: Number,
@@ -25,6 +25,8 @@ const userModel = new mongoose.Schema({
         type: String,
         select: false
     }
+}, {
+    timestamps: true
 })
 
 userModel.plugin(paginate);

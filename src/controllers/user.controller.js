@@ -1,29 +1,7 @@
 const mongoose      = require('mongoose');
 const userModel     = mongoose.model('userModel');
+const validateCpf    = require('validar-cpf');
 let apiUser        = {};
-
-function TestaCPF(strCPF) {
-    let Soma;
-    let Resto;
-    Number(strCPF)
-    Soma = 0;
-
-  if (strCPF == "00000000000") return false;
-     
-  for (i=1; i<=9; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (11 - i);
-  Resto = (Soma * 10) % 11;
-   
-    if ((Resto == 10) || (Resto == 11))  Resto = 0;
-    if (Resto != parseInt(strCPF.substring(9, 10)) ) return false;
-   
-  Soma = 0;
-    for (i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (12 - i);
-    Resto = (Soma * 10) % 11;
-   
-    if ((Resto == 10) || (Resto == 11))  Resto = 0;
-    if (Resto != parseInt(strCPF.substring(10, 11) ) ) return false;
-    return true;
-}
 
 apiUser.list = async (req, res) => {
 
@@ -76,13 +54,10 @@ apiUser.add = async (req, res) => {
     console.log(req.body);
     
     try {
-        
         const { name, cpf, password  } = req.body;
         const cpfString = cpf.toString();
 
-        console.log(typeof cpfString);
-
-        if(!TestaCPF(cpfString)) {
+        if(!validateCpf(cpfString)) {
             console.log('cpf inválido');
             return res.status(400).json({ fail: 'cpf inválido' })
         };
@@ -99,8 +74,6 @@ apiUser.add = async (req, res) => {
             return res.status(400).json({ fail: 'A senha não pode conter mais que 6 caracteres númericos' });
         };
 
-        console.log(typeof cpf);
-
         await userModel.create({ name, cpf, password }, (error, user) => {
     
             if(error) {
@@ -114,6 +87,9 @@ apiUser.add = async (req, res) => {
                 console.log('Ocorreu algum erro durante a criado do usuário');
                 return res.status(400).json({ fail: 'Ocorreu algum erro durante a criado do usuário' })
             };
+
+            user.account += Math.floor(Math.random() * 100000) + '-' + Math.floor(Math.random() * 10);
+            user.save();
 
             // user.password = undefined;
             console.log('############# Usuário criado ###############');

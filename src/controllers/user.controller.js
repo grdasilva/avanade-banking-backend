@@ -135,14 +135,14 @@ apiUser.transfer = async (req, res) => {
             }
 
             if(!user) {
-                console.log('############# Donta destinatária não foi encontrada ###############');
-                return res.status(200).json({ fail: 'Donta destinatária não foi encontrada' });
+                console.log('############# Conta destinatária não foi encontrada ###############');
+                return res.status(200).json({ fail: 'Conta destinatária não foi encontrada' });
             };
 
             return user;
         });
 
-        if(!accountOrigin && !accountDest) {
+        if(!accountOrigin || !accountDest) {
             
             console.log('Não pode ser realizada a Transferencia');
             return res.status(200).json({ fail: 'Não pode ser realizada a Transferencia' });

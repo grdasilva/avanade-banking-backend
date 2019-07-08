@@ -23,7 +23,7 @@ const userModel = new mongoose.Schema({
     password: {
         required: true,
         type: Number,
-        select: false
+        select: true
     }
 })
 

@@ -3,8 +3,29 @@ const userModel     = mongoose.model('userModel');
 const jwt           = require('jsonwebtoken');
 const authSecret    = require('../config/auth.secret.json');
 const bcrypt        = require('bcryptjs');
-const validateCpf   = require('validar-cpf');
+// const validateCpf   = require('validar-cpf');
 let apiUser        = {};
+
+function TestaCPF(strCPF) {
+    var Soma;
+    var Resto;
+    Soma = 0;
+  if (strCPF == "00000000000") return false;
+     
+  for (i=1; i<=9; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (11 - i);
+  Resto = (Soma * 10) % 11;
+   
+    if ((Resto == 10) || (Resto == 11))  Resto = 0;
+    if (Resto != parseInt(strCPF.substring(9, 10)) ) return false;
+   
+  Soma = 0;
+    for (i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (12 - i);
+    Resto = (Soma * 10) % 11;
+   
+    if ((Resto == 10) || (Resto == 11))  Resto = 0;
+    if (Resto != parseInt(strCPF.substring(10, 11) ) ) return false;
+    return true;
+}
 
 apiUser.list = async (req, res) => {
 
@@ -69,7 +90,7 @@ apiUser.add = async (req, res) => {
                 return res.status(400).json({ fail: error.message });
             };
         
-            if(!validateCpf(cpf.toString())) {
+            if(!TestaCPF(cpf.toString())) {
                 console.log('cpf inválido');
                 return res.status(400).json({ fail: 'cpf inválido' })
             };

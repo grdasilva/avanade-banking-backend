@@ -8,32 +8,34 @@ let apiLogin    = {};
 apiLogin.login = async (req, res) => {
 
     try {
-        const { login, password } = req.body;
-        const user = await userModel.findOne({ login }).select('+password');
+        const { cpf, password } = req.body;
+        const user = await userModel.findOne({ cpf }).select('+password');
 
-        if(!login) {
-            console.log('login não informado');
-            res.status(400).json({ fail: 'login não informado' });
+        if(!cpf) {
+            console.log('cpf não informado');
+            res.status(400).json({ fail: 'cpf não informado' });
             return;
         };
 
         if(!user) {
-            console.log('############### login inválido ###############');
-            res.status(400).json({fail: 'login inválido'});
+            console.log('############### cpf inválido ###############');
+            res.status(400).json({fail: 'cpf inválido'});
             return;
         };
 
         if(!password) {
-            console.log('password invalído');
-            res.status(400).json({ fail: 'password invalído' });
+            console.log('password não informado');
+            res.status(400).json({ fail: 'password não informado' });
             return;
         };
+        console.log(user);
+        
 
-        if(!await bcryptjs.compare(password, user.password)) {
-            
+        // if(!await bcryptjs.compare(password, user.password)) {
+        if(password !== user.password) {
+
             console.log('password incorreto');
-            res.status(400).json({ fail: 'password incorreto' });
-            return;
+            return res.status(400).json({ fail: 'password incorreto' });
         };
 
         if(user) {
@@ -43,8 +45,7 @@ apiLogin.login = async (req, res) => {
             const token = jwt.sign(
                 {
                     id: user._id,
-                    login: user.login,
-                    email: user.email
+                    name: user.name
                 },
                 authSecret.secret,
                 {

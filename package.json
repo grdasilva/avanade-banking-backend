@@ -21,7 +21,6 @@
     "express": "^4.16.4",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.5.7",
-    "mongoose-paginate": "^5.0.3",
-    "validar-cpf": "^2.1.1"
+    "mongoose-paginate": "^5.0.3"
   }
 }

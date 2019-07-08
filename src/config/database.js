@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-
-// mongoose.connect('mongodb+srv://drop:drop@cluster0-yai2v.mongodb.net/drop?retryWrites=true', { 
 mongoose.connect('mongodb+srv://atlas:atlas@cluster0-bdoft.mongodb.net/test?retryWrites=true&w=majority', { 
 
     useNewUrlParser: true,

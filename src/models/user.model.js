@@ -12,12 +12,11 @@ const userModel = new mongoose.Schema({
         type: Number,
         unique: true
     },
-    conta: {
+    account: {
         type: String,
-        default: Math.floor(Math.random() * 100000) + '-' + Math.floor(Math.random() * 10),
-        select: true
+        default: Math.floor(Math.random() * 100000) + '-' + Math.floor(Math.random() * 10)
     },
-    saldo: {
+    balance: {
         type: Number,
         default: 0,
     },

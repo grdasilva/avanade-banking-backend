@@ -6,6 +6,7 @@ module.exports = app => {
     app
         .route('/user')
         .get(userController.list)
+        .put(userController.deposit)
         .post(userController.add)
 
     app

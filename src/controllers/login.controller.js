@@ -7,31 +7,39 @@ let apiLogin    = {};
 
 apiLogin.login = async (req, res) => {
 
+    console.log('login');
+    
     try {
         const { cpf, password } = req.body;
-        const user = await userModel.findOne({ cpf }).select('+password');
-
+        
         if(!cpf) {
             console.log('cpf não informado');
-            return res.status(400).json({ fail: 'cpf não informado' });
-        };
-
-        if(!user) {
-            console.log('############### cpf inválido ###############');
-            return res.status(400).json({fail: 'cpf inválido'});
+            res.status(400).json({ fail: 'cpf não informado' });
+            return;
         };
 
         if(!password) {
             console.log('password não informado');
-            return res.status(400).json({ fail: 'password não informado' });
+            res.status(400).json({ fail: 'password não informado' });
+            return;
         };
+
+        const user = await userModel.findOne({ cpf }).select('+password');
+
+        if(!user) {
+            console.log('############### cpf inválido ###############');
+            res.status(400).json({fail: 'cpf inválido'});
+            return;
+        };
+
         console.log(user);
-        
 
-        if(!await bcryptjs.compare(password, user.password)) {
-
+        // if(!await bcryptjs.compare(password, user.password)) {
+        if(password !== user.password) {
+            
             console.log('password incorreto');
-            return res.status(400).json({ fail: 'password incorreto' });
+            res.status(400).json({ fail: 'password incorreto' });
+            return;
         };
 
         if(user) {
@@ -49,9 +57,12 @@ apiLogin.login = async (req, res) => {
                 }
             );
             
-            console.log('############# Logado ###############');
             res.set('x-access-token', token);
             res.status(200).json({ user, token });
+    
+            console.log('############# Logado ###############');
+            console.log(user);
+            console.log('####################################');
         };
 
     } catch (error) {

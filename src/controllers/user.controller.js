@@ -57,7 +57,6 @@ apiUser.listByCont = async (req, res) => {
 apiUser.add = async (req, res) => {
 
     console.log('Cadastro');
-    console.log(req.body);
     
     try {
         const { name, cpf, password  } = req.body;
@@ -113,7 +112,6 @@ apiUser.add = async (req, res) => {
 apiUser.transfer = async (req, res) => {
 
     console.log('Transferência');
-    console.log(req.body);
 
     try {
         const { yourAccount, sendAccount, transfer } = req.body;
@@ -127,7 +125,7 @@ apiUser.transfer = async (req, res) => {
 
             if(!user) {
                 console.log('############# Sua conta não foi encontrada ###############');
-                return res.status(200).json({ fail: 'Sua conta não foi encontrada' });
+                return res.status(400).json({ fail: 'Sua conta não foi encontrada' });
             };
 
             return user;
@@ -142,7 +140,7 @@ apiUser.transfer = async (req, res) => {
 
             if(!user) {
                 console.log('############# Conta destinatária não foi encontrada ###############');
-                return res.status(200).json({ fail: 'Conta destinatária não foi encontrada' });
+                return res.status(400).json({ fail: 'Conta destinatária não foi encontrada' });
             };
 
             return user;
@@ -151,7 +149,7 @@ apiUser.transfer = async (req, res) => {
         if(!accountOrigin || !accountDest) {
             
             console.log('Não pode ser realizada a Transferencia');
-            return res.status(200).json({ fail: 'Não pode ser realizada a Transferencia' });
+            return res.status(400).json({ fail: 'Não pode ser realizada a Transferencia' });
         };
 
         if((accountOrigin.balance - transfer) < 0) {

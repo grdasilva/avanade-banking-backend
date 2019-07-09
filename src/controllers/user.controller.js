@@ -1,10 +1,13 @@
 const mongoose      = require('mongoose');
 const userModel     = mongoose.model('userModel');
 const validateCpf    = require('validar-cpf');
+const bcryptjs = require('bcryptjs');
 let apiUser        = {};
 
 apiUser.list = async (req, res) => {
 
+    console.log('Listando todos');
+    
     try {
         const { page = 1 } = req.query;
         const users = await userModel.paginate(
@@ -27,6 +30,8 @@ apiUser.list = async (req, res) => {
 
 apiUser.listByCont = async (req, res) => {
 
+    console.log('Busncando por conta');
+    
     try {
         const { conta } = req.params;
 
@@ -51,6 +56,7 @@ apiUser.listByCont = async (req, res) => {
 
 apiUser.add = async (req, res) => {
 
+    console.log('Cadastro');
     console.log(req.body);
     
     try {
@@ -101,7 +107,15 @@ apiUser.add = async (req, res) => {
     } catch (error) {
         console.log(error.message);
         return res.status(400).json({ fail: error.message });
-    }
+    };
+
+    userModel.pre('save', async function(next) {
+    
+        const hash = await bcryptjs.hash(this.password, 10);
+    
+        this.password = hash;
+        next();
+    });
 };
 
 apiUser.transfer = async (req, res) => {
@@ -161,7 +175,7 @@ apiUser.transfer = async (req, res) => {
         accountDest.save();
 
         console.log('Transferencia realizada');
-        return nres.status(200).json({ success: 'Tranferência realizada' });
+        return res.status(200).json({ success: 'Tranferência realizada' });
         
     } catch (error) {
         console.log(error.message);
@@ -208,6 +222,8 @@ apiUser.deposit = async (req, res) => {
 
 apiUser.remove = async (req, res) => {
 
+    console.log('Removendo');
+    
     try {
       const { id } = req.params;
 

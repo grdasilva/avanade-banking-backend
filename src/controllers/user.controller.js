@@ -108,14 +108,6 @@ apiUser.add = async (req, res) => {
         console.log(error.message);
         return res.status(400).json({ fail: error.message });
     };
-
-    userModel.pre('save', async function(next) {
-    
-        const hash = await bcryptjs.hash(this.password, 10);
-    
-        this.password = hash;
-        next();
-    });
 };
 
 apiUser.transfer = async (req, res) => {

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-mongoose.connect('mongodb+srv://atlas:atlas@cluster0-bdoft.mongodb.net/test?retryWrites=true&w=majority', { 
+mongoose.connect(`mongodb+srv://${ process.env.MY_DATA_BASE }`, { 
 
     useNewUrlParser: true,
     useCreateIndex :  true,

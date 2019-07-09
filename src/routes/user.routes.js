@@ -6,16 +6,16 @@ module.exports = app => {
     app
         .route('/user')
         .get(userController.list)
-        .put(userController.deposit)
+        .put(loginController.requiredToken, userController.deposit)
         .post(userController.add)
 
     app
         .route('/user/:conta')
-        .get(userController.listByCont)
+        .get(loginController.requiredToken, userController.listByCont)
 
     app
         .route('/user/transfer')
-        .put(userController.transfer)
+        .put(loginController.requiredToken, userController.transfer)
 
     app
         .route('/user/:id')

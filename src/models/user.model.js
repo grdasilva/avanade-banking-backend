@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const paginate = require('mongoose-paginate');
-// const bcryptjs = require('bcryptjs');
+const bcryptjs = require('bcryptjs');
 const userModel = new mongoose.Schema({
 
     name: {
@@ -31,14 +31,15 @@ const userModel = new mongoose.Schema({
 
 userModel.plugin(paginate);
 
-// userModel.pre('save', async function(next) {
+userModel.pre('save', async function(next) {
     
-//     if(!this.password) return;
+    if(!this.password) {console.log('não usei o pre save'); return};
 
-//     const hash = await bcryptjs.hash(this.password, 10);
+    console.log('Usei o pre save')
+    const hash = await bcryptjs.hash(this.password, 10);
 
-//     this.password = hash;
-//     next();
-// });
+    this.password = hash;
+    next();
+});
 
 mongoose.model('userModel', userModel);

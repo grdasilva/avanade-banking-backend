@@ -32,16 +32,13 @@ apiLogin.login = async (req, res) => {
             return;
         };
 
-        console.log(user);
-
-        // if(!await bcryptjs.compare(password, user.password)) {
-        if(password !== user.password) {
+        if(!await bcryptjs.compare(password, user.password)) {
+        // if(password !== user.password) {
             
             console.log('password incorreto');
-            res.status(400).json({ fail: 'password incorreto' });
-            return;
+            return res.status(400).json({ fail: 'password incorreto' });
         };
-
+        
         if(user) {
 
             user.password = undefined;

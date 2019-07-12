@@ -41,7 +41,7 @@ apiUser.listByCont = async (req, res) => {
     try {
         const { account } = req.params;
 
-        await accountModel.findOne({ account }, (error, user) => {
+        await accountModel.findOne({ account },  (error, account) => {
 
             if(error) {
                 console.log(error.message);
@@ -49,11 +49,11 @@ apiUser.listByCont = async (req, res) => {
             }
 
             console.log('############# User encontrado ###############');
-            console.log(user);
+            console.log(account);
             console.log('#############################################');
 
-            return res.status(200).json(user);
-        })
+            return res.status(200).json(account);
+        }).populate({ path: 'accountModel', select: ['agency', 'account', 'balance']})
     } catch (error) {
         console.log(error.message);
         return res.status(400).json({ fail: error.message });
@@ -211,41 +211,37 @@ apiUser.transfer = async (req, res) => {
     try {
         const { yourAccount, sendAccount, transfer } = req.body;
 
-        let accountOrigin = await userModel.findOne({account: yourAccount}, (error, user) => {
+        let accountOrigin = await accountModel.findOne({account: yourAccount}, (error, account) => {
 
             if(error) {
                 console.log(error.message);
                 return res.status(400).json({ fail: error.message });
             }
 
-            if(!user) {
+            if(!account) {
                 console.log('############# Sua conta não foi encontrada ###############');
                 return res.status(400).json({ fail: 'Sua conta não foi encontrada' });
             };
 
-            return user;
+            return account;
         });
 
-        let accountDest = await userModel.findOne({account: sendAccount}, (error, user) => {
+        let accountDest = await accountModel.findOne({account: sendAccount}, (error, account) => {
 
             if(error) {
                 console.log(error.message);
                 return res.status(400).json({ fail: error.message });
             }
 
-            if(!user) {
+            if(!account) {
                 console.log('############# Conta destinatária não foi encontrada ###############');
                 return res.status(400).json({ fail: 'Conta destinatária não foi encontrada' });
             };
 
-            return user;
+            return account;
         });
 
-        if(!accountOrigin || !accountDest) {
-            
-            console.log('Não pode ser realizada a Transferencia');
-            return res.status(400).json({ fail: 'Não pode ser realizada a Transferencia' });
-        };
+        if(!accountOrigin || !accountDest) return
 
         if((accountOrigin.balance - transfer) < 0) {
             

@@ -18,7 +18,7 @@ module.exports = app => {
         .get(userController.listAccount)
 
     app
-        .route('/user/:conta')
+        .route('/user/:account')
         .get(loginController.requiredToken, userController.listByCont)
 
     app

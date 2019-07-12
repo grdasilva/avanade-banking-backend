@@ -25,8 +25,11 @@ const accountModel = new mongoose.Schema({
 accountModel.plugin(paginate);
 
 accountModel.pre('save', async function(next) {
-    
+
+    if(!this.idUser) return;
+
     console.log('Usei o pre save conta')
+
     const numberAccount = Math.floor(Math.random() * 100000) + '-' + Math.floor(Math.random() * 10)
 
     this.account = numberAccount;

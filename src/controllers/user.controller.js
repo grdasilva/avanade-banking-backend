@@ -1,8 +1,9 @@
 const mongoose      = require('mongoose');
 const userModel     = mongoose.model('userModel');
-const validateCpf    = require('validar-cpf');
-const bcryptjs = require('bcryptjs');
-let apiUser        = {};
+const accountModel  = mongoose.model('accountModel');
+const validateCpf   = require('validar-cpf');
+const bcryptjs      = require('bcryptjs');
+let apiUser         = {};
 
 apiUser.list = async (req, res) => {
 
@@ -12,11 +13,16 @@ apiUser.list = async (req, res) => {
         const { page = 1 } = req.query;
         const users = await userModel.paginate(
             {},
-            {
+            { 
                 sort: { createdAt: -1 },
+                populate: {
+                    path: 'accountModel',
+                    select: ['agency', 'account', 'balance'],
+                },
                 page, limit: 10
-            }
-        );
+            },
+            
+        )
 
       if(users) {
         console.log('############# Users listadas ###############');
@@ -33,9 +39,9 @@ apiUser.listByCont = async (req, res) => {
     console.log('Busncando por conta');
     
     try {
-        const { conta } = req.params;
+        const { account } = req.params;
 
-        await userModel.findOne({ conta }, (error, user) => {
+        await accountModel.findOne({ account }, (error, user) => {
 
             if(error) {
                 console.log(error.message);
@@ -78,11 +84,11 @@ apiUser.add = async (req, res) => {
             console.log('A senha não pode conter mais que 6 caracteres númericos');
             return res.status(400).json({ fail: 'A senha não pode conter mais que 6 caracteres númericos' });
         };
-
+        
         await userModel.create({ name, cpf, password }, (error, user) => {
     
             if(error) {
-                console.log('Este´é o erro' + error.message);
+                console.log(error.message);
                 
                 console.log(error.message);
                 return res.status(400).json({ fail: error.message });
@@ -93,21 +99,108 @@ apiUser.add = async (req, res) => {
                 return res.status(400).json({ fail: 'Ocorreu algum erro durante a criado do usuário' })
             };
 
-            user.account += Math.floor(Math.random() * 100000) + '-' + Math.floor(Math.random() * 10);
-            user.save();
-
-            // user.password = undefined;
+            user.password = undefined;
             console.log('############# Usuário criado ###############');
             console.log(user);
             console.log('#########################################');
-    
             return res.status(200).json(user);
-        })
+        });
+
     } catch (error) {
         console.log(error.message);
         return res.status(400).json({ fail: error.message });
     };
 };
+
+apiUser.account = async (req, res) => {
+
+    console.log('cadastro de conta');
+    
+    try {
+        const { idUser } = req.body;
+    
+        if(!idUser) {
+            console.log('idUser não foi informado');
+            return res.status(400).json({ fail: 'idUser não foi informado' });
+        }
+
+        // const accountWithUser = await accountModel.find({ idUser }, (error, account) => {
+            
+        //     if(error) {
+        //         console.log(error.message);
+        //         return res.status(400).json({ fail: error.message });
+        //     };
+
+        //     return account
+        // });
+
+        // if(accountWithUser) {
+        //     console.log('Esté usuário já possui uma conta vinculada');
+        //     return res.status(400).json({ fail: 'Esté usuário já possui uma conta vinculada' })
+        // }
+    
+        await accountModel.create({ idUser }, (error, newAccount) => {
+            
+            if(error) {
+                console.log(error.message);
+                return res.status(400).json({ fail: error.message });
+            };
+    
+            if(!newAccount) {
+                console.log('Não foi possível criar a conta');
+                return res.status(400).json({ fail: 'Não foi possível criar a conta' });
+            };
+    
+            console.log('antes');
+            console.log(newAccount.account);
+            
+            newAccount.idUser += idUser;
+            // newAccount.account = numberAccount;
+            newAccount.save();
+
+            console.log('depois');
+            console.log(newAccount.account);
+    
+            console.log('Conta criada');
+            console.log(newAccount);
+            return res.status(200).json(newAccount);
+        });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).json({ fail: error.message })
+    }
+}
+
+apiUser.listAccount = async (req, res) => {
+    console.log('listando as contas');
+    
+    try {
+        const { page = 1 } = req.query;
+        const accounts = await accountModel.paginate(
+            {},
+            { 
+                sort: { createdAt: -1 },
+                populate: {
+                    path: 'idUser',
+                    select: ['name', 'cpf'],
+                },
+                page, limit: 10
+            },
+            
+        )
+
+        if(!accounts) {
+            console.log('contas não encontradas');
+            return res.status(400).json({ fail: 'Contas não encontradas' });
+        };
+
+        console.log('############# Users listadas ###############');
+        return res.status(200).json(accounts);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).json({ fail: error.message });
+    };
+}
 
 apiUser.transfer = async (req, res) => {
 
@@ -181,25 +274,30 @@ apiUser.deposit = async (req, res) => {
     try {
         const { account, value } = req.body;
 
-        await userModel.findOneAndUpdate({ account }, value, (error, user) => {
+        if(!account) {
+            console.log('############# Conta destinatária não foi informada ###############');
+            return res.status(200).json({ fail: 'Conta destinatária não foi informada' });
+        };
+
+        if(!value) {
+            console.log('############# Valor do deposíto não foi informado ###############');
+            return res.status(200).json({ fail: 'Valor do deposíto não foi informado' });
+        };
+
+        await accountModel.findOneAndUpdate({ account }, value, (error, accountUser) => {
 
             if(error) {
                 console.log(error.message);
                 return res.status(400).json({ fail: error.message });
             }
 
-            if(!user) {
+            if(!accountUser) {
                 console.log('############# Conta destinatária não foi encontrada ###############');
                 return res.status(200).json({ fail: 'Conta destinatária não foi encontrada' });
             };
 
-            if(!value) {
-                console.log('############# Valor do deposíto não foi informado ###############');
-                return res.status(200).json({ fail: 'Valor do deposíto não foi informado' });
-            };
-
-            user.balance += value;
-            user.save();
+            accountUser.balance += value;
+            accountUser.save();
 
             console.log('############# Deposíto realizado com sucesso ###############');
             return res.status(200).json({ success: 'Deposíto realizado com sucesso' })

@@ -12,19 +12,12 @@ const userModel = new mongoose.Schema({
         type: Number,
         unique: true
     },
-    account: {
-        type: String,
-        default: String
-    },
-    balance: {
-        type: Number,
-        default: 0,
-    },
     password: {
         required: true,
         type: String,
         select: false
-    }
+    },
+
 }, {
     timestamps: true
 })

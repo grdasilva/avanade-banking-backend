@@ -10,6 +10,14 @@ module.exports = app => {
         .post(userController.add)
 
     app
+        .route('/account')
+        .post(userController.account)
+
+    app
+        .route('/accounts')
+        .get(userController.listAccount)
+
+    app
         .route('/user/:conta')
         .get(loginController.requiredToken, userController.listByCont)
 

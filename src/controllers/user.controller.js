@@ -124,20 +124,22 @@ apiUser.account = async (req, res) => {
             return res.status(400).json({ fail: 'idUser não foi informado' });
         }
 
-        // const accountWithUser = await accountModel.find({ idUser }, (error, account) => {
+        const accountWithUser = await accountModel.find({ idUser }, (error, account) => {
             
-        //     if(error) {
-        //         console.log(error.message);
-        //         return res.status(400).json({ fail: error.message });
-        //     };
+            if(error) {
+                console.log(error.message);
+                return res.status(400).json({ fail: error.message });
+            };
 
-        //     return account
-        // });
+            return account
+        });
 
-        // if(accountWithUser) {
-        //     console.log('Esté usuário já possui uma conta vinculada');
-        //     return res.status(400).json({ fail: 'Esté usuário já possui uma conta vinculada' })
-        // }
+        
+        if(accountWithUser.length > 0) {
+             
+            console.log('usuário já possui uma conta vinculada');
+            return res.status(400).json({ fail: 'Usuário já possui uma conta cadastrada' })
+        };
     
         await accountModel.create({ idUser }, (error, newAccount) => {
             

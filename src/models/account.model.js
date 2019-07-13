@@ -14,6 +14,10 @@ const accountModel = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    extract: {
+        type: Array,
+        default: []
+    },
     idUser: {
         required: true,
         type: mongoose.Schema.Types.ObjectId, ref: 'userModel'

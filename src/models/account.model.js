@@ -30,7 +30,9 @@ accountModel.plugin(paginate);
 
 accountModel.pre('save', async function(next) {
 
-    if(!this.idUser) return;
+    if(!this.idUser) {console.log('não tem idUSer');  return};
+
+    // if(this.account) { console.log('Usando a conta para aqui'); return }
 
     console.log('Usei o pre save conta')
 

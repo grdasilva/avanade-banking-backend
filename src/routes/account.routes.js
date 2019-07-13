@@ -1,32 +1,26 @@
 const userController = require('../controllers/user.controller');
+const accountController = require('../controllers/account.controller')
 
 module.exports = app => {
 
-    app
-        .route('/v1/account/deposit')
-        .put(userController.requiredToken, userController.deposit)
-
+    
     app
         .route('/v1/account')
-        .post(userController.account)
-
+        .post(accountController.account)
+    
     app
         .route('/v1/accounts')
-        .get(userController.listAccount)
+        .get(accountController.listAccount)
 
     app
         .route('/v1/account/:account')
-        .get(userController.requiredToken, userController.listByCont)
+        .get(userController.requiredToken, accountController.listByCont)
+    
+    app
+        .route('/v1/account/deposit')
+        .put(userController.requiredToken, accountController.deposit)
 
     app
-        .route('/v1/transfer')
-        .put(userController.requiredToken, userController.transfer)
-
-    app
-        .route('/v1/user/:id')
-        .delete(userController.remove)
-
-    app
-        .route('/v1/sigin')
-        .post(userController.login)
+        .route('/v1/account/transfer')
+        .put(userController.requiredToken, accountController.transfer)
 };

@@ -1,8 +1,13 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-mongoose.connect(`mongodb+srv://${ process.env.MY_DATA_BASE }`, { 
+// mongoose.connect(`mongodb+srv://${ process.env.MY_DATA_BASE }`, { 
 
+//     useNewUrlParser: true,
+//     useCreateIndex :  true,
+// });
+
+mongoose.connect('mongodb://localhost/internet-banking', { 
     useNewUrlParser: true,
     useCreateIndex :  true,
 });

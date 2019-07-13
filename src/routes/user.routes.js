@@ -1,5 +1,4 @@
 const userController = require('../controllers/user.controller');
-// const userController = require('../controllers/_login.controller');
 
 module.exports = app => {
 
@@ -13,6 +12,7 @@ module.exports = app => {
         .delete(userController.remove)
 
     app
-        .route('/v1/sigin')
+        .route('/v1/user/sigin')
         .post(userController.login)
+
 };

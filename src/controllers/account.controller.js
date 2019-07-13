@@ -118,6 +118,7 @@ apiAccount.transfer = async (req, res) => {
 
     try {
         const { yourAccount, sendAccount, transfer } = req.body;
+        const date = new Date();
 
         let accountOrigin = await accountModel.findOne({account: yourAccount}, (error, account) => {
 
@@ -159,15 +160,15 @@ apiAccount.transfer = async (req, res) => {
 
         accountOrigin.balance -= transfer;
         accountOrigin.extract.push({
-            status: `Removido ${transfer}`,
-            date: Date.now()
+            status: `Removido da sua conta R$${transfer}`,
+            date: `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} as ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}s`
         });
         accountOrigin.save();
         
         accountDest.balance += transfer;
         accountDest.extract.push({
-            status: `Adicionado ${transfer}`,
-            date: Date.now()
+            status: `Adicionado na sua conta R$${transfer}`,
+            date: `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} as ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}s`
         });
         accountDest.save();
 
@@ -187,6 +188,7 @@ apiAccount.deposit = async (req, res) => {
     
     try {
         const { account, value } = req.body;
+        const date = new Date();
 
         if(!account) {
             console.log('############# Conta destinatária não foi informada ###############');
@@ -211,6 +213,10 @@ apiAccount.deposit = async (req, res) => {
             };
 
             accountUser.balance += value;
+            accountUser.extract.push({
+                status: `Depositado da sua conta R$${value}`,
+                date: `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} as ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}s`
+            });
             accountUser.save();
 
             console.log('############# Deposíto realizado com sucesso ###############');

@@ -158,9 +158,17 @@ apiAccount.transfer = async (req, res) => {
         };
 
         accountOrigin.balance -= transfer;
+        accountOrigin.extract.push({
+            status: `Removido ${transfer}`,
+            date: Date.now()
+        });
         accountOrigin.save();
         
         accountDest.balance += transfer;
+        accountDest.extract.push({
+            status: `Adicionado ${transfer}`,
+            date: Date.now()
+        });
         accountDest.save();
 
         console.log('Transferencia realizada');

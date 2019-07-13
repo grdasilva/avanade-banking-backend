@@ -14,9 +14,9 @@ const accountModel = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    extract: {
+    extract : {
         type: Array,
-        default: []
+        default: [],
     },
     idUser: {
         required: true,

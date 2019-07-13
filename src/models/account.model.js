@@ -30,12 +30,17 @@ accountModel.plugin(paginate);
 
 accountModel.pre('save', async function(next) {
 
-    if(!this.idUser) {console.log('não tem idUSer');  return};
+    if(!this.idUser) {
+        console.log('não tem idUSer');  
+        return
+    };
 
-    // if(this.account) { console.log('Usando a conta para aqui'); return }
+    if(this.account.length > 0) {
+        console.log('já tenho conta cadastrada não devo adicionar outra');
+        return;
+    }
 
-    console.log('Usei o pre save conta')
-
+    console.log('Gerei o número da conta')
     const numberAccount = Math.floor(Math.random() * 100000) + '-' + Math.floor(Math.random() * 10)
 
     this.account = numberAccount;

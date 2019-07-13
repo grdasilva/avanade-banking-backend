@@ -57,32 +57,24 @@ apiAccount.account = async (req, res) => {
             return res.status(400).json({ fail: 'Usuário já possui uma conta cadastrada' })
         };
     
-        await accountModel.create({ idUser }, (error, newAccount) => {
-            
-            if(error) {
-                console.log(error.message);
-                return res.status(400).json({ fail: error.message });
-            };
-    
-            if(!newAccount) {
-                console.log('Não foi possível criar a conta');
-                return res.status(400).json({ fail: 'Não foi possível criar a conta' });
-            };
-    
-            console.log('antes');
-            console.log(newAccount.account);
-            
-            newAccount.idUser += idUser;
-            // newAccount.account = numberAccount;
-            newAccount.save();
+        const newAccount = await accountModel.create({ idUser });
+        
+        if(!newAccount) {
+            console.log(error.message);
+            return res.status(400).json({ fail: error.message });
+        };
 
-            console.log('depois');
-            console.log(newAccount.account);
-    
-            console.log('Conta criada');
-            console.log(newAccount);
-            return res.status(200).json(newAccount);
-        });
+        if(!newAccount) {
+            console.log('Não foi possível criar a conta');
+            return res.status(400).json({ fail: 'Não foi possível criar a conta' });
+        };
+
+        newAccount.idUser += mongoose.Types.ObjectId(idUser);
+        newAccount.save();
+
+        console.log('Conta criada');
+        console.log(newAccount);
+        return res.status(200).json(newAccount);
     } catch (error) {
         console.log(error.message);
         return res.status(400).json({ fail: error.message })

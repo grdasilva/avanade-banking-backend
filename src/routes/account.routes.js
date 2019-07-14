@@ -5,8 +5,8 @@ module.exports = app => {
 
     
     app
-        .route('/v1/account')
-        .post(accountController.account)
+        .route('/v1/account/:idUser')
+        .post(accountController.add)
     
     app
         .route('/v1/accounts')

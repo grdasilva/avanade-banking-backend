@@ -28,12 +28,12 @@ apiAccount.listByCont = async (req, res) => {
     }
 };
 
-apiAccount.account = async (req, res) => {
+apiAccount.add = async (req, res) => {
 
     console.log('cadastro de conta');
     
     try {
-        const { idUser } = req.body;
+        const { idUser } = req.params;
     
         if(!idUser) {
             console.log('idUser não foi informado');
@@ -160,7 +160,7 @@ apiAccount.transfer = async (req, res) => {
 
         accountOrigin.balance -= transfer;
         accountOrigin.extract.push({
-            status: `Removido da sua conta R$${transfer}`,
+            status: `Removido na sua conta R$${transfer}`,
             date: `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} as ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}s`
         });
         accountOrigin.save();
@@ -214,9 +214,10 @@ apiAccount.deposit = async (req, res) => {
 
             accountUser.balance += value;
             accountUser.extract.push({
-                status: `Depositado da sua conta R$${value}`,
+                status: `Depositado na sua conta R$${value}`,
                 date: `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} as ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}s`
             });
+            accountUser.extract.reverse();
             accountUser.save();
 
             console.log('############# Deposíto realizado com sucesso ###############');

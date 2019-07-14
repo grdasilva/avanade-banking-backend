@@ -21,6 +21,6 @@ module.exports = app => {
         .put(userController.requiredToken, accountController.deposit)
 
     app
-        .route('/v1/account/transfer')
+        .route('/v1/account/transfer/:yourAccount/:sendAccount')
         .put(userController.requiredToken, accountController.transfer)
 };

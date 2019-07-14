@@ -117,7 +117,8 @@ apiAccount.transfer = async (req, res) => {
     console.log('Transferência');
 
     try {
-        const { yourAccount, sendAccount, transfer } = req.body;
+        const { transfer } = req.body;
+        const { yourAccount, sendAccount } = req.params;
         const date = new Date();
 
         let accountOrigin = await accountModel.findOne({account: yourAccount}, (error, account) => {
@@ -160,9 +161,10 @@ apiAccount.transfer = async (req, res) => {
 
         accountOrigin.balance -= transfer;
         accountOrigin.extract.push({
-            status: `Removido na sua conta R$${transfer}`,
+            status: `Removido da sua conta R$${transfer}`,
             date: `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} as ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}s`
         });
+        accountOrigin.extract = accountOrigin.extract.reverse();
         accountOrigin.save();
         
         accountDest.balance += transfer;
@@ -170,6 +172,7 @@ apiAccount.transfer = async (req, res) => {
             status: `Adicionado na sua conta R$${transfer}`,
             date: `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} as ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}s`
         });
+        accountDest.extract = accountDest.extract.reverse();
         accountDest.save();
 
         console.log('Transferencia realizada');

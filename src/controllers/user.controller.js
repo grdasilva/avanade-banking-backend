@@ -176,11 +176,18 @@ apiUser.requiredToken = async (req, res, next) => {
 
     console.log('############# Endereço necessita de autenticação ###############');
     const token = req.headers['x-access-token'];
-
+    const idUser = req.headers['id-user'];
+    
     if(!token) {
         console.log('############# Token não informado ###############');
         return res.status(400).json({ fail: 'Token não informado' });
     };
+
+    if(!idUser) {
+        
+        console.log('############# idUser não foi passado na requisição ###############');
+        return res.status(400).json({ fail: 'idUser não foi passado na requisição' });
+    }
 
     jwt.verify(token, authSecret.secret, (error, decoded) => {
 
@@ -190,6 +197,11 @@ apiUser.requiredToken = async (req, res, next) => {
             console.log('Token inválido');
             return res.status(400).json({ fail: 'Token inválido' });
         };
+
+        if(idUser !== decoded.id) {
+            console.log('############# Acesso negado ###############');
+            return res.status(400).json({ fail: 'Acesso negado' });
+        }
 
         console.log('############# Acesso autorizado ###############');
         req.user = decoded.id;

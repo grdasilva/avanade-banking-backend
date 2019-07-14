@@ -17,7 +17,7 @@ module.exports = app => {
         .get(userController.requiredToken, accountController.listByCont)
     
     app
-        .route('/v1/account/deposit')
+        .route('/v1/account/deposit/:account')
         .put(userController.requiredToken, accountController.deposit)
 
     app

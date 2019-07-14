@@ -187,7 +187,8 @@ apiAccount.deposit = async (req, res) => {
     console.log('deposito');
     
     try {
-        const { account, value } = req.body;
+        const { value } = req.body;
+        const { account } = req.params;
         const date = new Date();
 
         if(!account) {
@@ -217,7 +218,7 @@ apiAccount.deposit = async (req, res) => {
                 status: `Depositado na sua conta R$${value}`,
                 date: `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} as ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}s`
             });
-            accountUser.extract.reverse();
+            accountUser.extract = accountUser.extract.reverse()
             accountUser.save();
 
             console.log('############# Deposíto realizado com sucesso ###############');

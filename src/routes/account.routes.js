@@ -2,11 +2,10 @@ const userController = require('../controllers/user.controller');
 const accountController = require('../controllers/account.controller')
 
 module.exports = app => {
-
-    
+  
     app
-        .route('/v1/account')
-        .post(accountController.account)
+        .route('/v1/account/:idUser')
+        .post(accountController.add)
     
     app
         .route('/v1/accounts')
@@ -17,10 +16,14 @@ module.exports = app => {
         .get(userController.requiredToken, accountController.listByCont)
     
     app
-        .route('/v1/account/deposit')
+        .route('/v1/account/deposit/:account')
         .put(userController.requiredToken, accountController.deposit)
 
     app
-        .route('/v1/account/transfer')
+        .route('/v1/account/transfer/:yourAccount/:sendAccount')
         .put(userController.requiredToken, accountController.transfer)
+
+    app
+        .route('/v1/account/searchAccount/:id')
+        .get(userController.requiredToken, accountController.searchAccount)
 };

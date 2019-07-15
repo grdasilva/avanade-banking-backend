@@ -30,14 +30,14 @@ apiAccount.listByCont = async (req, res) => {
 
 apiAccount.account = async (req, res) => {
 
-    console.log('cadastro de conta');
+    console.log('Cadastro de conta');
     
     try {
         const { idUser } = req.body;
     
         if(!idUser) {
-            console.log('idUser não foi informado');
-            return res.status(400).json({ fail: 'idUser não foi informado' });
+            console.log('ID do usuário não foi informado');
+            return res.status(400).json({ fail: 'ID do usuário não foi informado' });
         }
 
         const accountWithUser = await accountModel.find({ idUser }, (error, account) => {
@@ -53,7 +53,7 @@ apiAccount.account = async (req, res) => {
         
         if(accountWithUser.length > 0) {
              
-            console.log('usuário já possui uma conta vinculada');
+            console.log('Usuário já possui uma conta vinculada');
             return res.status(400).json({ fail: 'Usuário já possui uma conta cadastrada' })
         };
     
@@ -74,7 +74,7 @@ apiAccount.account = async (req, res) => {
 
         console.log('Conta criada');
         console.log(newAccount);
-        return res.status(200).json(newAccount);
+        return res.status(201).json(newAccount);
     } catch (error) {
         console.log(error.message);
         return res.status(400).json({ fail: error.message })
@@ -100,8 +100,8 @@ apiAccount.listAccount = async (req, res) => {
         )
 
         if(!accounts) {
-            console.log('contas não encontradas');
-            return res.status(400).json({ fail: 'Contas não encontradas' });
+            console.log('Contas não encontradas');
+            return res.status(400).json({ fail: 'Nenhuma conta foi encontrada' });
         };
 
         console.log('############# Users listadas ###############');
@@ -227,5 +227,33 @@ apiAccount.deposit = async (req, res) => {
         return res.status(400).json({ fail: error.message });
     }
 };
+
+apiAccount.searchAccount = async (req, res) => {
+
+    console.log('Buscando conta por ID');
+    
+    try {
+        const { id } = req.params;
+        console.log({ id })
+
+        await accountModel.findOne({ idUser : id }, (error, account) => {
+
+            if(error) {
+                console.log(error.message);
+                return res.status(400).json({ fail: error.message });
+            }
+
+            console.log('############# User encontrado ###############');
+            console.log(account);
+            console.log('#############################################');
+
+            return res.status(200).json(account)
+        }).populate({ path: 'accountModel', select: ['account']});
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).json({ fail: error.message });
+    }
+};
+
 
 module.exports = apiAccount;

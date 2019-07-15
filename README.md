@@ -53,7 +53,7 @@ Se tudo estiver devidamente configurado, terá esse resultado no terminal
 E ai podemos começar a testar as requisições, utilizando o POSTMAN, caso não esteja rodando nosso front-end, a seguir possui um link com a documentação da API, para realizar os comandos de forma correta
 
 ```
-https://documenter.getpostman.com/view/7504609/SVSHrpDU?version=latest
+https://documenter.getpostman.com/view/7504609/SVSHrpDU?version=latest#348a3626-abd4-466e-bcfa-0cd1923a2d6f
 ```
 
 ## Desenvolvido com

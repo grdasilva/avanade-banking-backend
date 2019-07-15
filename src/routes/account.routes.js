@@ -2,8 +2,7 @@ const userController = require('../controllers/user.controller');
 const accountController = require('../controllers/account.controller')
 
 module.exports = app => {
-
-    
+  
     app
         .route('/v1/account/:idUser')
         .post(accountController.add)
@@ -23,4 +22,8 @@ module.exports = app => {
     app
         .route('/v1/account/transfer/:yourAccount/:sendAccount')
         .put(userController.requiredToken, accountController.transfer)
+
+    app
+        .route('/v1/account/searchAccount/:id')
+        .get(userController.requiredToken, accountController.searchAccount)
 };

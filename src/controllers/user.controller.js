@@ -1,10 +1,12 @@
-const mongoose      = require('mongoose');
-const userModel     = mongoose.model('userModel');
-const validateCpf   = require('validar-cpf');
-const bcryptjs      = require('bcryptjs');
-const jwt           = require('jsonwebtoken');
-const authSecret    = require('../config/auth.secret.json');
-let apiUser         = {};
+const mongoose           = require('mongoose');
+const userModel          = mongoose.model('userModel');
+// const accountModel       = mongoose.model('accountModel');
+const validateCpf        = require('validar-cpf');
+const bcryptjs           = require('bcryptjs');
+const jwt                = require('jsonwebtoken');
+const authSecret         = require('../config/auth.secret.json');
+const ValidationContract = require('../helpers/fluent-validator');
+let apiUser              = {};
 
 apiUser.list = async (req, res) => {
 
@@ -36,7 +38,7 @@ apiUser.list = async (req, res) => {
 };
 
 apiUser.add = async (req, res) => {
-
+    let contract = new ValidationContract();
     console.log('Cadastro');
     
     try {
@@ -48,17 +50,14 @@ apiUser.add = async (req, res) => {
             return res.status(400).json({ fail: 'cpf inválido' })
         };
 
-        if(password.length < 6) {
-            console.log(password);
-            console.log('A senha precisar conter 6 caracteres númericos');
-            return res.status(400).json({ fail: 'A senha precisar conter 6 caracteres númericos' });
-        };
-    
-        if(password.length > 6) {
-            console.log(password);  
-            console.log('A senha não pode conter mais que 6 caracteres númericos');
-            return res.status(400).json({ fail: 'A senha não pode conter mais que 6 caracteres númericos' });
-        };
+        contract.hasMinLen(password , 6 , 'A senha deve conter pelo menos 6 caracteres');
+        contract.hasMaxLen(password , 6 , 'A senha deve conter no maximo 6 caracteres');
+        
+          // Se os dados forem válidos
+        if (!contract.isValid()) {
+            res.status(400).send(contract.errors()).end();
+            return;
+        }
         
         await userModel.create({ name, cpf, password }, (error, user) => {
     
@@ -78,7 +77,11 @@ apiUser.add = async (req, res) => {
             console.log('############# Usuário criado ###############');
             console.log(user);
             console.log('#########################################');
-            return res.status(200).json(user);
+            // logModel.operation.push({
+            //     Operação: `Criação de usuário`,
+            //     date: `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} as ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}s`
+            // });
+            return res.status(201).json(user);
         });
 
     } catch (error) {
@@ -111,23 +114,21 @@ apiUser.remove = async (req, res) => {
 };
 
 apiUser.login = async (req, res) => {
-
+    
+    let contract = new ValidationContract();
     console.log('login');
     
     try {
         const { cpf, password } = req.body;
         
-        if(!cpf) {
-            console.log('cpf não informado');
-            res.status(400).json({ fail: 'cpf não informado' });
-            return;
-        };
+        contract.isRequired(cpf, 'O CPF é obrigatório');
+        contract.isRequired(password, 'O CPF é obrigatório');
 
-        if(!password) {
-            console.log('password não informado');
-            res.status(400).json({ fail: 'password não informado' });
+        // Se os dados forem válidos
+        if (!contract.isValid()) {
+            res.status(400).send(contract.errors()).end();
             return;
-        };
+        }
 
         const user = await userModel.findOne({ cpf }).select('+password');
 
@@ -179,7 +180,7 @@ apiUser.requiredToken = async (req, res, next) => {
 
     if(!token) {
         console.log('############# Token não informado ###############');
-        return res.status(400).json({ fail: 'Token não informado' });
+        return res.status(401).json({ fail: 'Acesso não autorizado, token requirido' });
     };
 
     jwt.verify(token, authSecret.secret, (error, decoded) => {
@@ -188,7 +189,7 @@ apiUser.requiredToken = async (req, res, next) => {
 
             console.log(error.message);
             console.log('Token inválido');
-            return res.status(400).json({ fail: 'Token inválido' });
+            return res.status(401).json({ fail: 'Acesso não autorizado, token inválido' });
         };
 
         console.log('############# Acesso autorizado ###############');
@@ -196,5 +197,6 @@ apiUser.requiredToken = async (req, res, next) => {
         next();
     });
 };
+
 
 module.exports = apiUser;

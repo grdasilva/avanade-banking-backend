@@ -48,7 +48,7 @@ npm run prod
 
 Se tudo estiver devidamente configurado, terá esse resultado no terminal 
 
-![Terminal](https://ibb.co/ZSVpV3T)
+<img width="694" alt="results-server-working" src="https://user-images.githubusercontent.com/36687523/61194214-7f25ce00-a696-11e9-96fc-6ed22b8bfef6.png">
 
 E ai podemos começar a testar as requisições, utilizando o POSTMAN, caso não esteja rodando nosso front-end, a seguir possui um link com a documentação da API, para realizar os comandos de forma correta
 
